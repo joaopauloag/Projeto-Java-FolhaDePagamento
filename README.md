@@ -18,7 +18,7 @@
 >- Bater o mesmo ponto mais de uma vez;
 >- Tentar alterar dados de sindicato sem que o empregado seja um sindicalista;
 >- Tentar executar uma funcionalidade do sistema específica de um tipo de empregado em um empregado de tipo diferente;
->- Procura um empregado com um ID que não existe;
+>- Procurar um empregado com um ID que não existe;
 >- Tentar rodar a folha de pagamento mais de uma vez no mesmo dia.
 
 ### FUNCIONALIDADES DO SISTEMA
