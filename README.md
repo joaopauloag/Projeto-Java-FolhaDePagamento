@@ -1,4 +1,4 @@
-# Projeto de um sistema de folha de pagamento da disciplina Projeto de software, Instituto de Computação - UFAL
+# Sistema de folha de pagamento
 
 >- Versão do Java: 1.8.0_211
 >- Ambiente de desenvolvimento: Eclipse 2019-03
