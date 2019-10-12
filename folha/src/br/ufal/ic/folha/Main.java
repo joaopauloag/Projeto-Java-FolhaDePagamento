@@ -11,7 +11,7 @@ public class Main {
 	private static int ano = 2019;
 	private static int semana = 3;
 	private static final int linhas = 100;
-	private static final int colunas = 17;
+	private static final int colunas = 16;
 	private static final int estados = 1000;
 	private static int estadoAtual = 0;
 	private static int estadoMaximo = 0;
@@ -25,7 +25,7 @@ public class Main {
 	 * 4 - forma de pagamento; 5 - sindicato; 6 - ID sindicato; 7 - taxa sindical;
 	 * 8 - salario horario; 9 - salario mensal; 10 - comissao; 11 - taxas adicionais;
 	 * 12 - hora de entrada; 13 - hora de saida; 14 - salario acumulado;
-	 * 15 - agenda de pagamento; 16 - (rodou a folha?)
+	 * 15 - agenda de pagamento;
 	 */
 	
 	public static void main(String[] args) {
