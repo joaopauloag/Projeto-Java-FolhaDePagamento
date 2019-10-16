@@ -5,27 +5,28 @@ import java.util.Scanner;
 public class Main {
 
 	private static Scanner teclado;
-	private static int diaSemana = 4;
-	private static int dia = 16;
-	private static int mes = 10;
-	private static int ano = 2019;
-	private static int semana = 3;
+	private static final int linhasCal = 6;
 	private static final int linhas = 100;
 	private static final int colunas = 16;
-	private static final int estados = 1000;
+	private static final int estados = 10000;
 	private static int estadoAtual = 0;
 	private static int estadoMaximo = 0;
 	private static int id = 2019000;
 	private static boolean refazer = false;
-	private static boolean rodouAFolha = false;
 	private static String[][][] empregados = new String[linhas][colunas][estados];
+	private static int[][] cal = new int[linhasCal][estados];
 	
 	/* 
 	 * posicoes de empregados: 0 - ID; 1 - nome; 2 - endereco; 3 - tipo
 	 * 4 - forma de pagamento; 5 - sindicato; 6 - ID sindicato; 7 - taxa sindical;
 	 * 8 - salario horario; 9 - salario mensal; 10 - comissao; 11 - taxas adicionais;
 	 * 12 - hora de entrada; 13 - hora de saida; 14 - salario acumulado;
-	 * 15 - agenda de pagamento;
+	 * 15 - agenda de pagamento.
+	 */
+	
+	/*
+	 * posicoes de calendario: 0 - dia da semana; 1 - dia; 2 - mes; 3 - ano;
+	 * 4 - semana; 5 - rodou a folha hoje? (0 nao : 1 sim).
 	 */
 	
 	public static void main(String[] args) {
@@ -34,6 +35,14 @@ public class Main {
 		boolean executando = true;
 		
 		teclado = new Scanner(System.in);
+		
+		// iniciando calendario
+		cal[0][estadoAtual] = 4;
+		cal[1][estadoAtual] = 16;
+		cal[2][estadoAtual] = 10;
+		cal[3][estadoAtual] = 2019;
+		cal[4][estadoAtual] = 3;
+		cal[5][estadoAtual] = 0;
 		
 		while(executando) {
 			
@@ -84,7 +93,7 @@ public class Main {
 		
 		System.out.print("                                            ");
 		
-		switch(diaSemana) {
+		switch(cal[0][estadoAtual]) {
 		case 1:
 			System.out.print("Domingo, "); break;
 		case 2:
@@ -101,48 +110,50 @@ public class Main {
 			System.out.print("Sabado, "); break;
 		}
 		
-		System.out.printf("%d/%d/%d\n", dia, mes, ano);
+		System.out.printf("%d/%d/%d\n", cal[1][estadoAtual], cal[2][estadoAtual], cal[3][estadoAtual]);
 	}
 	
 	private static void avancarDia() {
 		
-		rodouAFolha = false;
+		copiarEstado();
 		
-		dia++;
-		diaSemana++;
+		cal[5][estadoAtual] = 0;
 		
-		if(dia == 31 && (mes == 4 || mes == 6 || mes == 9 || mes == 11)) {
+		cal[0][estadoAtual]++;
+		cal[1][estadoAtual]++;
+		
+		if(cal[1][estadoAtual] == 31 && (cal[2][estadoAtual] == 4 || cal[2][estadoAtual] == 6 || cal[2][estadoAtual] == 9 || cal[2][estadoAtual] == 11)) {
 			
-			mes++;
-			dia = semana = 1;
+			cal[2][estadoAtual]++;
+			cal[1][estadoAtual] = cal[4][estadoAtual] = 1;
 			
-		} else if(dia == 32 && (mes == 1 || mes == 3 || mes == 5 || mes == 7 ||
-				mes == 8 || mes == 10 || mes == 12)) {
+		} else if(cal[1][estadoAtual] == 32 && (cal[2][estadoAtual] == 1 || cal[2][estadoAtual] == 3 || cal[2][estadoAtual] == 5 || cal[2][estadoAtual] == 7 ||
+				cal[2][estadoAtual] == 8 || cal[2][estadoAtual] == 10 || cal[2][estadoAtual] == 12)) {
 			
-			mes++;
-			dia = semana = 1;
+			cal[2][estadoAtual]++;
+			cal[1][estadoAtual] = cal[4][estadoAtual] = 1;
 
-		} else if(dia == 29 && mes == 2 && !(eAnoBissexto())) {
+		} else if(cal[1][estadoAtual] == 29 && cal[2][estadoAtual] == 2 && !(eAnoBissexto())) {
 			
-			mes++;
-			dia = semana = 1;
+			cal[2][estadoAtual]++;
+			cal[1][estadoAtual] = cal[4][estadoAtual] = 1;
 		
-		} else if(dia == 30 && mes == 2 && eAnoBissexto()) {
+		} else if(cal[1][estadoAtual] == 30 && cal[2][estadoAtual] == 2 && eAnoBissexto()) {
 			
-			mes++;
-			dia = semana = 1;
+			cal[2][estadoAtual]++;
+			cal[1][estadoAtual] = cal[4][estadoAtual] = 1;
 			
 		}
 		
-		if(mes == 13) {
-			ano++;
-			dia = mes = semana = 1;
+		if(cal[2][estadoAtual] == 13) {
+			cal[3][estadoAtual]++;
+			cal[1][estadoAtual] = cal[2][estadoAtual] = cal[4][estadoAtual] = 1;
 		}
 		
-		if(diaSemana == 8) {
+		if(cal[0][estadoAtual] == 8) {
 			
-			diaSemana = 1;
-			semana++;
+			cal[0][estadoAtual] = 1;
+			cal[4][estadoAtual]++;
 			
 		}
 		
@@ -150,9 +161,9 @@ public class Main {
 	
 	private static boolean eAnoBissexto() {
 		
-		if(ano % 4 == 0) {
+		if(cal[3][estadoAtual] % 4 == 0) {
 			
-			if((ano % 100 == 0) && (ano % 400 != 0)) {
+			if((cal[3][estadoAtual] % 100 == 0) && (cal[3][estadoAtual] % 400 != 0)) {
 				
 				return false;
 				
@@ -164,14 +175,15 @@ public class Main {
 
 	private static void copiarEstado() {
 		
-		int i, j;
-		
-		for(i = 0; i < linhas; i++) {
+		for(int i = 0; i < linhas; i++) {
 			
-			for(j = 0; j < colunas; j++) {
+			for(int j = 0; j < colunas; j++) {
 				
 				empregados[i][j][estadoAtual+1] = empregados[i][j][estadoAtual]; 
 			}
+		}
+		for(int i = 0; i < linhasCal; i++) {
+			cal[i][estadoAtual+1] = cal[i][estadoAtual];
 		}
 		estadoAtual++;
 		refazer = false;
@@ -692,10 +704,12 @@ public class Main {
 	
 	private static void rodarFolhaDePagamento() {
 		
-		if(rodouAFolha) {
+		if(cal[5][estadoAtual] == 1) {
 			System.out.println("\nA folha ja foi rodada hoje!");
 			return;
 		}
+		
+		copiarEstado();
 		
 		boolean aux = false;
 		double salario;
@@ -707,12 +721,12 @@ public class Main {
 			if(empregados[i][0][estadoAtual] == null) {
 				continue;
 				
-			} else if(empregados[i][15][estadoAtual].equals("1") && diaSemana == 6) {
+			} else if(empregados[i][15][estadoAtual].equals("1") && cal[0][estadoAtual] == 6) {
 				if(empregados[i][14][estadoAtual] != null) {
 					salario = Double.parseDouble(empregados[i][14][estadoAtual]);
 					empregados[i][14][estadoAtual] = null;
 				}
-				if(semana == 4) {
+				if(cal[4][estadoAtual] == 4) {
 					if(empregados[i][5][estadoAtual].equals("1") && empregados[i][7][estadoAtual] != null) {
 						salario -= Double.parseDouble(empregados[i][7][estadoAtual]);
 					}
@@ -726,13 +740,13 @@ public class Main {
 				}
 				aux = true;
 				
-			} else if(empregados[i][15][estadoAtual].equals("3") && semana % 2 == 0) {
+			} else if(empregados[i][15][estadoAtual].equals("3") && cal[4][estadoAtual] % 2 == 0) {
 				salario = Double.parseDouble(empregados[i][9][estadoAtual]) / 2;
 				if(empregados[i][14][estadoAtual] != null) {
 					salario += Double.parseDouble(empregados[i][14][estadoAtual]);
 					empregados[i][14][estadoAtual] = null;
 				}
-				if(semana == 4) {
+				if(cal[4][estadoAtual] == 4) {
 					if(empregados[i][5][estadoAtual].equals("1") && empregados[i][7][estadoAtual] != null) {
 						salario -= Double.parseDouble(empregados[i][7][estadoAtual]);
 					}
@@ -759,29 +773,29 @@ public class Main {
 			System.out.println("\nNao ha pagamentos para a data de hoje.");
 		}
 		
-		rodouAFolha = true;
+		cal[5][estadoAtual] = 1;
 	}
 	
 	private static boolean eUltimoDiaUtil() {
 		
-		if(mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12) {
+		if(cal[2][estadoAtual] == 1 || cal[2][estadoAtual] == 3 || cal[2][estadoAtual] == 5 || cal[2][estadoAtual] == 7 || cal[2][estadoAtual] == 8 || cal[2][estadoAtual] == 10 || cal[2][estadoAtual] == 12) {
 			
-			if(dia == 31 && (diaSemana != 1 && diaSemana != 7) || ((dia == 30 || dia == 29) && diaSemana == 6)) {
+			if(cal[1][estadoAtual] == 31 && (cal[0][estadoAtual] != 1 && cal[0][estadoAtual] != 7) || ((cal[1][estadoAtual] == 30 || cal[1][estadoAtual] == 29) && cal[0][estadoAtual] == 6)) {
 				return true;
 			}
-		} else if(mes == 4 || mes == 6 || mes == 9 || mes == 11) {
+		} else if(cal[2][estadoAtual] == 4 || cal[2][estadoAtual] == 6 || cal[2][estadoAtual] == 9 || cal[2][estadoAtual] == 11) {
 			
-			if(dia == 30 && (diaSemana != 1 && diaSemana != 7) || ((dia == 29 || dia == 28) && diaSemana == 6)) {
+			if(cal[1][estadoAtual] == 30 && (cal[0][estadoAtual] != 1 && cal[0][estadoAtual] != 7) || ((cal[1][estadoAtual] == 29 || cal[1][estadoAtual] == 28) && cal[0][estadoAtual] == 6)) {
 				return true;
 			}
-		} else if(mes == 2 && eAnoBissexto()) {
+		} else if(cal[2][estadoAtual] == 2 && eAnoBissexto()) {
 			
-			if(dia == 29 && (diaSemana != 1 && diaSemana != 7) || ((dia == 28 || dia == 27) && diaSemana == 6)) {
+			if(cal[1][estadoAtual] == 29 && (cal[0][estadoAtual] != 1 && cal[0][estadoAtual] != 7) || ((cal[1][estadoAtual] == 28 || cal[1][estadoAtual] == 27) && cal[0][estadoAtual] == 6)) {
 				return true;
 			}
-		} else if(mes == 2 && !eAnoBissexto()) {
+		} else if(cal[2][estadoAtual] == 2 && !eAnoBissexto()) {
 			
-			if(dia == 28 && (diaSemana != 1 && diaSemana != 7) || ((dia == 27 || dia == 26) && diaSemana == 6)) {
+			if(cal[1][estadoAtual] == 28 && (cal[0][estadoAtual] != 1 && cal[0][estadoAtual] != 7) || ((cal[1][estadoAtual] == 27 || cal[1][estadoAtual] == 26) && cal[0][estadoAtual] == 6)) {
 				return true;
 			}
 		}
